@@ -18,7 +18,6 @@ session_start()
   <li><a href="?page=Logout">Logout <?php echo $_SESSION['name'] ?></a></li>
   <?php } ?>
 </ul>
-
 <?php echo "Welcome on this site"; ?>
 
 </body>

@@ -18,7 +18,6 @@ $email = $pw = $pw_check = "";
 $login = False;
 
 //Functie test_input
-
 function test_input($data) {
 	$data = trim($data);
 	$data = stripslashes($data);
@@ -27,40 +26,37 @@ function test_input($data) {
 }
 
 //Functie check_user om gebruikersdata te vergelijken met users.txt
-
 function check_user($data) {
-	$file = fopen("Users/users.txt", "r");
-	$read = fread($file, filesize("Users/users.txt"));
-	$read = preg_replace('~[\r\n]+~', '|', $read);
-	$array = explode("|", $read);
-	if (in_array($data, $array)) {
+	$sql = "SELECT * FROM users WHERE email='$data'";
+	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
+	$query = mysqli_query($conn, $sql);
+	$array = mysqli_fetch_array($query);
+	$email = $array['email'];
+	if ($data == $email) {
 		return True;
 	} else {
 		return False;
 	}
-	fclose($file);
+	mysqli_close($conn);
 }
 
 //Functie check_password om wachtwoord te vergelijken met users.txt
-
 function check_password($data) {
-	$file = fopen("Users/users.txt", "r");
-	$read = fread($file, filesize("Users/users.txt"));
-	$read = preg_replace('~[\r\n]+~', '|', $read);
-	$array = explode("|", $read);
-	$pw_check = $array[array_search($data, $array)+2];
-	fclose ($file);
+	$sql = "SELECT * FROM users WHERE email='$data'";
+	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
+	$array = mysqli_fetch_array(mysqli_query($conn, $sql));
+	$pw_check = $array['password'];
+	mysqli_close($conn);
 	return $pw_check;
 }
 
 //Functie get_name om naam op te halen uit users.txt
 function get_name($data) {
-	$file = fopen("Users/users.txt", "r");
-	$read = fread($file, filesize("Users/users.txt"));
-	$read = preg_replace('~[\r\n]+~', '|', $read);
-	$array = explode("|", $read);
-	$get_name = $array[array_search($data, $array)+1];
-	fclose ($file);
+	$sql = "SELECT * FROM users WHERE email='$data'";
+	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
+	$array = mysqli_fetch_array(mysqli_query($conn, $sql));
+	$get_name = $array['name'];
+	mysqli_close($conn);
 	return $get_name;
 }
 
@@ -96,7 +92,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
   <li><a href="?page=Home">Home</a></li>
   <li><a href="?page=About">About</a></li>
   <li><a href="?page=Contact">Contact</a></li>
-  <?php if (!$_SESSION['login']) { ?>
+  <?php if (empty($_SESSION['login'])) { ?>
   <li><a href="?page=Register">Register</a></li>
   <li><a href="?page=Login">Login</a></li>
   <?php } else { ?>

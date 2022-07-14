@@ -81,7 +81,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
   <li><a href="?page=Home">Home</a></li>
   <li><a href="?page=About">About</a></li>
   <li><a href="?page=Contact">Contact</a></li>
-  <?php if (!$_SESSION['login']) { ?>
+  <?php if (empty($_SESSION['login'])) { ?>
   <li><a href="?page=Register">Register</a></li>
   <li><a href="?page=Login">Login</a></li>
   <?php } else { ?>
@@ -109,9 +109,13 @@ if(!$valid) { ?>
   <input type="submit" value="Register">
  </form>
 <?php } else {
-	$user = fopen("Users/users.txt", "a");
-	fwrite($user, "\n$email|$name|$pw|");
-	fclose($user);
+	$sql = "INSERT INTO users (email, name, password) VALUES ('$email', '$name', '$pw')";
+	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
+	if (!$conn) {
+		die("Something went wrong. Please try again later");
+	}
+	mysqli_query($conn, $sql);
+	mysqli_close($conn);
 	echo '<meta http-equiv="refresh" content="0; URL=?page=Login">';
 } ?>
 

@@ -1,0 +1,2 @@
+[email]|[naam]|[wachtwoord]
+coach@man-kind.nl|Geert Weggemans|halt!

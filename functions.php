@@ -8,7 +8,10 @@ session_start()
 <body>
 
 <?php
-//Variabelen
+//data_layer
+require 'data_layer.php';
+
+//variabelen
 $salErr = $namErr = $emailErr = $phonErr = $comprefErr = $messErr = $pwErr = $pwRepeatErr = "";
 
 //showMenu
@@ -111,122 +114,68 @@ function testContact() {
 	}
 }
 
-//checkUser
-function checkUser($data) {
-	$file = fopen("Users/users.txt", "r");
-	$read = fread($file, filesize("Users/users.txt"));
-	$read = preg_replace('~[\r\n]+~', '|', $read);
-	$array = explode("|", $read);
-	if (in_array($data, $array)) {
-		return True;
-	} else {
-		return False;
-	}
-	fclose($file);
-}
-
 //checkRegistration
 function checkRegistration() {
 	global $namErr, $emailErr, $pwErr, $pwRepeatErr;
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
-	  if (empty($_POST["name"])) {
-		  $namErr = "Name is required";
-	  } else {
-		  $name = testInput($_POST["name"]);
-		  if (!preg_match("/^[a-zA-Z-' ]*$/",$name)) {
-          $namErr = "Only letters and spaces are allowed";
-		  }
-	  }
-	  if (empty($_POST["email"])) {
-		  $emailErr = "E-mail is required";
-	  } else {
-		  $email = testInput($_POST["email"]);
-		  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			  $emailErr = "Invalid e-mail";
-		  } else {
-			  if (checkUser($email) == True) {
-				  $emailErr = "E-mail already exists";
-			  }
-		  }
-	  }
-	  if (empty($_POST["pw"])) {
-		  $pwErr = "Password is required";
-	  } else {
-		  $pw = testInput($_POST["pw"]);
-	  }
-	  if (empty($_POST["pwrepeat"])) {
-		  $pwRepeatErr = "Please repeat your password";
-	  } else {
-		  $pwrepeat = testInput($_POST["pwrepeat"]);
-		  if ($pw !== $pwrepeat) {
-			  $pwRepeatErr = "Entered passwords do not match";
-		  }
-	  }
-	  if (empty($namErr) && empty($emailErr) && empty($pwErr) && empty($pwRepeatErr)) {
-		  $user = fopen("Users/users.txt", "a");
-		  fwrite($user, "\n$email|$name|$pw");
-		  fclose($user);
-		  return True;
-	  }
+		$name = testInput($_POST['name']);
+		$email = testInput($_POST['email']);
+		$pw = testInput($_POST['pw']);
+		$pwrepeat = testInput($_POST['pwrepeat']);
+		$user = getUserData($email);
+	    if (empty($_POST["name"])) {
+		    $namErr = "Name is required";
+	    } elseif (!preg_match("/^[a-zA-Z-' ]*$/",$name)) {
+            $namErr = "Only letters and spaces are allowed";
+		}
+	    if (empty($_POST["email"])) {
+		    $emailErr = "E-mail is required";
+			} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+				$emailErr = "Invalid e-mail";
+				} elseif (!empty($user['email']) && $user['email'] == $email) {
+					$emailErr = "E-mail already exists";
+				}
+	    if (empty($_POST["pw"])) {
+		    $pwErr = "Password is required";
+		}
+	    if (empty($_POST["pwrepeat"])) {
+		    $pwRepeatErr = "Please repeat your password";
+	    } elseif ($pw !== $pwrepeat) {
+			$pwRepeatErr = "Entered passwords do not match";
+		}
+		if (empty($namErr) && empty($emailErr) && empty($pwErr) && empty($pwRepeatErr)) {
+			registerNewUser($email, $name, $pw);
+		    return True;
+		}
 	}
 }
 
-//checkPassword
-function checkPassword($data) {
-	$file = fopen("Users/users.txt", "r");
-	$read = fread($file, filesize("Users/users.txt"));
-	$read = preg_replace('~[\r\n]+~', '|', $read);
-	$array = explode("|", $read);
-	$pw_check = $array[array_search($data, $array)+2];
-	fclose ($file);
-	return $pw_check;
-}
-
-//getName
-function getName($data) {
-	$file = fopen("Users/users.txt", "r");
-	$read = fread($file, filesize("Users/users.txt"));
-	$read = preg_replace('~[\r\n]+~', '|', $read);
-	$array = explode("|", $read);
-	$getName = $array[array_search($data, $array)+1];
-	fclose ($file);
-	return $getName;
-}
-
 //logInUser
-
 function logInUser() {
 	global $emailErr, $pwErr;
 	$pw = $pwCheck = "";
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
-	  if (empty($_POST["email"])) {
-		  $emailErr = "E-mail is required";
-	  } else {
-		  $email = testInput($_POST["email"]);
-		  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			  $emailErr = "Invalid e-mail";
-		  } else {
-			  if (checkUser($email) == False){
-				  $emailErr = "Unknown e-mail";
-			  } else {
-				  $pwCheck = checkPassword($email);
-			  }
-		  }
-	  }
-	  if (empty($_POST["pw"])) {
-		  $pwErr = "Password is required";
-	  } else {
-		  $pw = testInput($_POST["pw"]);
-	  }
-	  if ($pw !== $pwCheck) {
-		  $pwErr = "E-mail doesn't match password";
-	  }
-	  if(empty($emailErr) && empty($pwErr)) {
-		  $_SESSION['login'] = True;
-		  $_SESSION['email'] = $email;
-		  $_SESSION['name'] = getName($email);
-		  return True;
-	  }
+		$email = testInput($_POST['email']);
+		$pw = testInput($_POST['pw']);
+		$user = getUserData($email);
+	    if (empty($email)) {
+		    $emailErr = "E-mail is required";
+	    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			$emailErr = "Invalid e-mail";
+		} elseif (empty($user) || $user['email'] !== $email) {
+		    $emailErr = "Unknown e-mail";
+		}
+	    if (empty($pw)) {
+		    $pwErr = "Password is required";
+		} elseif (empty($user) || $user['password'] !== $pw) {
+			$pwErr = "E-mail doesn't match password";
+		}
+	    if(empty($emailErr) && empty($pwErr)) {
+		    $_SESSION['login'] = True;
+		    $_SESSION['email'] = $user['email'];
+		    $_SESSION['name'] = $user['name'];
+		    return True;
+		}
 	}
 }
 

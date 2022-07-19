@@ -29,6 +29,18 @@ function registerNewUser($email, $name, $pw) {
 	mysqli_close($conn);
 }
 
+//getProductData
+function getProductData(){
+	$sql = "SELECT * FROM product";
+	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
+	if (!$conn) {
+		die("Something went wrong. Please try again later.");
+	}
+	$query = mysqli_query($conn, $sql);
+	mysqli_close($conn);
+	return $query;
+}
+
 ?>
 
 </body>

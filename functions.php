@@ -40,6 +40,11 @@ function showContactThanksPage() {
 	include 'contactthanks.php';
 }
 
+//showWebshopPage
+function showWebshopPage() {
+	showProductOverview();
+}
+
 //showRegisterPage
 function showRegisterPage() {
 	global $namErr, $emailErr, $pwErr, $pwRepeatErr;
@@ -184,6 +189,21 @@ function logOutUser() {
 	session_unset();
 }
 
+//showProductOverview
+function showProductOverview() {
+	$product_data = getProductData();
+	while ($row = mysqli_fetch_array($product_data))
+	{
+		$product_image = $row['filename_image'];
+		$product_name = $row['name'];
+		$product_price = $row['price'];
+		echo '<li>';
+		echo '<img src="'.$product_image.'"/>';
+		echo '<div>'.$product_name.'</div></li>';
+		echo '<div>'.$product_price.'</div></li>';
+	}
+}
+
 //getRequestedPage
 function getRequestedPage(){
 	if(!isset($_GET['page'])){
@@ -242,6 +262,9 @@ function showResponsePage($data){
 		  break;
 		case 'Thanks';
 		  showContactThanksPage();
+		  break;
+		case 'Webshop';
+		  showWebshopPage();
 		  break;
 		case 'Register';
 		  showRegisterPage();

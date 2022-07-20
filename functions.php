@@ -15,8 +15,12 @@ require 'data_layer.php';
 $salErr = $namErr = $emailErr = $phonErr = $comprefErr = $messErr = $pwErr = $pwRepeatErr = "";
 
 //showHeader
-function showHeader() {
-	echo '<h1 class="header">'.$_GET['page'].'</h1>';
+function showHeader($page) {
+	if ($page == 'Product') {
+		echo '<h1 class="header">Webshop</h1>';
+	} else {
+		echo '<h1 class="header">'.$page.'</h1>';
+	}
 }
 
 //showMenu
@@ -260,6 +264,9 @@ function processRequest($page) {
 			$page = 'Home';
 		}
 		break;
+		case is_numeric($page);
+		$page = 'Product';
+		break;
 		case 'Logout';
 		logOutUser();
 		$page = 'Home';
@@ -271,7 +278,7 @@ function processRequest($page) {
 
 //showResponsePage
 function showResponsePage($data){
-	showHeader();
+	showHeader($data);
 	showMenu();
 	switch($data)
 	{
@@ -290,7 +297,7 @@ function showResponsePage($data){
 		case 'Webshop';
 		  showWebshopPage();
 		  break;
-		case in_array($data, range(0, 20));
+		case 'Product';
 		  showProductDetail();
 		  break;
 		case 'Register';

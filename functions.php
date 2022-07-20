@@ -14,6 +14,11 @@ require 'data_layer.php';
 //variabelen
 $salErr = $namErr = $emailErr = $phonErr = $comprefErr = $messErr = $pwErr = $pwRepeatErr = "";
 
+//showHeader
+function showHeader() {
+	echo '<h1 class="header">'.$_GET['page'].'</h1>';
+}
+
 //showMenu
 function showMenu() {
 	include 'menu.php';
@@ -127,7 +132,8 @@ function checkRegistration() {
 		$email = testInput($_POST['email']);
 		$pw = testInput($_POST['pw']);
 		$pwrepeat = testInput($_POST['pwrepeat']);
-		$user = getUserData($email);
+		$data = getData('users', 'email', $email);
+		$user = mysqli_fetch_assoc($data);
 	    if (empty($_POST["name"])) {
 		    $namErr = "Name is required";
 	    } elseif (!preg_match("/^[a-zA-Z-' ]*$/",$name)) {
@@ -162,7 +168,8 @@ function logInUser() {
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
 		$email = testInput($_POST['email']);
 		$pw = testInput($_POST['pw']);
-		$user = getUserData($email);
+		$data = getSpecificData('users', 'email',$email);
+		$user = mysqli_fetch_assoc($data);
 	    if (empty($email)) {
 		    $emailErr = "E-mail is required";
 	    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -191,17 +198,34 @@ function logOutUser() {
 
 //showProductOverview
 function showProductOverview() {
-	$product_data = getProductData();
+	$product_data = getData('product');
 	while ($row = mysqli_fetch_array($product_data))
 	{
+		$product_id = $row['ID'];
 		$product_image = $row['filename_image'];
 		$product_name = $row['name'];
 		$product_price = $row['price'];
 		echo '<li>';
-		echo '<img src="'.$product_image.'"/>';
+		echo '<a href="?page='.$product_id.'"><img src="'.$product_image.'" alt="'.$product_name.'"/></a>';
 		echo '<div>'.$product_name.'</div></li>';
 		echo '<div>'.$product_price.'</div></li>';
 	}
+}
+
+//showProductDetail
+function showProductDetail() {
+	$id = $_GET['page'];
+	$data = getSpecificData('product', 'ID', $id);
+	$product = mysqli_fetch_array($data);
+	$image = $product['filename_image'];
+	$name = $product['name'];
+	$price = $product['price'];
+	$descr = $product['item_description'];
+	echo '<li>';
+	echo '<img src="'.$image.'" alt="'.$name.'"/>';
+	echo '<div>'.$name.'</div></li>';
+	echo '<div>'.$price.'</div></li>';
+	echo '<div>'.$descr.'</div></li>';
 }
 
 //getRequestedPage
@@ -247,7 +271,7 @@ function processRequest($page) {
 
 //showResponsePage
 function showResponsePage($data){
-	echo '<h1 class="header">'.$data.'</h1>';
+	showHeader();
 	showMenu();
 	switch($data)
 	{
@@ -265,6 +289,9 @@ function showResponsePage($data){
 		  break;
 		case 'Webshop';
 		  showWebshopPage();
+		  break;
+		case in_array($data, range(0, 20));
+		  showProductDetail();
 		  break;
 		case 'Register';
 		  showRegisterPage();

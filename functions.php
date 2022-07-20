@@ -209,10 +209,10 @@ function showProductOverview() {
 		$product_image = $row['filename_image'];
 		$product_name = $row['name'];
 		$product_price = $row['price'];
-		echo '<li>';
-		echo '<a href="?page='.$product_id.'"><img src="'.$product_image.'" alt="'.$product_name.'"/></a>';
-		echo '<div>'.$product_name.'</div></li>';
-		echo '<div>'.$product_price.'</div></li>';
+		echo '<li class="menu">';
+		echo '<a href="?page='.$product_id.'"><img class="productimg" src="'.$product_image.'" alt="'.$product_name.'"/></a>';
+		echo '<div class="title">'.$product_name.'</div></li>';
+		echo '<div class="price">'.$product_price.'</div></li>';
 	}
 }
 
@@ -225,10 +225,10 @@ function showProductDetail() {
 	$name = $product['name'];
 	$price = $product['price'];
 	$descr = $product['item_description'];
-	echo '<li>';
-	echo '<img src="'.$image.'" alt="'.$name.'"/>';
-	echo '<div>'.$name.'</div></li>';
-	echo '<div>'.$price.'</div></li>';
+	echo '<li class="menu">';
+	echo '<img class="productimg" src="'.$image.'" alt="'.$name.'"/>';
+	echo '<div class="title">'.$name.'</div></li>';
+	echo '<div class="price">'.$price.'</div></li>';
 	echo '<div>'.$descr.'</div></li>';
 }
 

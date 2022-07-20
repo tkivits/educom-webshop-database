@@ -44,4 +44,28 @@ body {
 	padding: 5px;
 	text-align: left;
 }
-.error { color: red; }
+.error { 
+	color: red; 
+}
+.productimg {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
+	max-height: 200px;
+	width: auto;
+	border-radius: 2px;
+
+}
+.title {
+	text-align: center;
+	font-size: 30px;
+	color: black;
+	margin-top: 10px;
+}
+.price {
+	text-align: center;
+	font-size: 30px;
+	color: darkred;
+	margin-bottom: 12px;
+}

@@ -28,6 +28,18 @@ function getData($table){
 	return $query;
 }
 
+//getRowData
+function getColumnData($table, $column) {
+	$sql = "SELECT $column FROM $table";
+	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
+	if (!$conn) {
+		die("Something went wrong. Please try again later.");
+	}
+	$query = mysqli_query($conn, $sql);
+	mysqli_close($conn);
+	return $query;
+}
+
 //getSpecificData
 function getSpecificData($table, $column, $data){
 	$sql = "SELECT * FROM $table WHERE $column='$data'";

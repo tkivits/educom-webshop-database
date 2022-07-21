@@ -52,6 +52,24 @@ function showContactThanksPage() {
 //showWebshopPage
 function showWebshopPage() {
 	showProductOverview();
+	addToCart();
+}
+
+//showShoppingCart
+function showShoppingCart() {
+	echo '<div class="cartcontainer">';
+	if (!isset($_SESSION['cart'])) {
+		echo '<div class="title"> Your shopping cart is empty!</div>';
+		echo '<div class="cart">You can buy products in our <a href="?page=Webshop">webshop</a></div>';
+	} else {
+		showItemsCart($_SESSION['cart']);
+	}
+	echo '</div>';
+}
+
+//showShoppingCartPage
+function showShoppingCartPage() {
+	showShoppingCart();
 }
 
 //showRegisterPage
@@ -200,36 +218,112 @@ function logOutUser() {
 	session_unset();
 }
 
+//addToCart
+function addToCart(){
+	if(isset($_POST['add'])){
+		$id = testInput($_POST['add']);
+		if (!isset($_SESSION['cart'])) {
+			$data = getColumnData('product', 'ID');
+			$_SESSION['cart'] = array();
+			while ($row = mysqli_fetch_array($data)) {
+				$single_id = $row['ID'];
+				$_SESSION['cart'][$single_id] = '0';
+			}
+		}
+		if ($_SESSION['cart'][$id] >= 0) {
+			$qty = $_SESSION['cart'][$id];
+			$qty++;
+			$_SESSION['cart'][$id] = $qty;
+		}
+	}
+	unset($_POST['add']);
+}
+
+//updateCart
+function updateCart() {
+	if(isset($_POST['CartID']) && isset($_POST['amountCart'])) {
+		$item_id = testInput($_POST['CartID']);
+		$amount = testInput($_POST['amountCart']);
+		$_SESSION['cart'][$item_id] = $amount;
+		unset($_POST['CartID']);
+		unset($_POST['amountCart']);
+	}
+}
+
+
+//showItemsCart
+function showItemsCart($array){
+	$items = array_filter($array);
+	foreach ($items as $id => $amount) {
+		$data = getSpecificData('product', 'ID', $id);
+		$item = mysqli_fetch_array($data);
+		$item_id = $item['ID'];
+		$image = $item['filename_image'];
+		$name = $item['name'];
+		$price = $item['price'];
+		$item_total = number_format($amount * $price, 2);
+		if (isset($_POST['amount'])) {
+			$amount = htmlspecialchars($_POST['amount']);
+		}
+		echo '<div class="cartitems">';
+		echo '<div class="imagecontainer"><a href="?page='.$item_id.'"><img class="productimg" src="'.$image.'" alt="'.$name.'"/></a></div>';
+		echo '<div class="about">';
+		echo '<div class="itemtitle">'.$name.'</div>';
+		echo '<div class="itemprice">'.$price.'</div>';
+		echo '</div>';
+		echo '<div class="countcontainer">';
+		echo '<form method="post">';
+		echo '<textarea class="count" id="amountCart" name="amountCart">'.$amount.'</textarea>';
+		echo '<input type="hidden" name="CartID" value="'.$item_id.'">';
+		echo '<input class="cartButton" type="submit" value="Update"></div>';
+		echo '</form>';
+		echo '<div class="pricetotalcontainer"><div class="priceitemtotal">'.$item_total.'</div></div>';
+		echo '</div>';
+	}
+}
+
 //showProductOverview
 function showProductOverview() {
 	$product_data = getData('product');
 	while ($row = mysqli_fetch_array($product_data))
 	{
-		$product_id = $row['ID'];
-		$product_image = $row['filename_image'];
-		$product_name = $row['name'];
-		$product_price = $row['price'];
-		echo '<li class="menu">';
-		echo '<a href="?page='.$product_id.'"><img class="productimg" src="'.$product_image.'" alt="'.$product_name.'"/></a>';
-		echo '<div class="title">'.$product_name.'</div></li>';
-		echo '<div class="price">'.$product_price.'</div></li>';
+		$item_id = $row['ID'];
+		$image = $row['filename_image'];
+		$name = $row['name'];
+		$price = $row['price'];
+		echo '<form class="menu" method="post">';
+		echo '<a href="?page='.$item_id.'"><img class="productimg" src="'.$image.'" alt="'.$name.'"/></a>';
+		echo '<div class="title">'.$name.'</div>';
+		echo '<div class="price">'.$price.'</div>';
+		if (isset($_SESSION['login'])){
+			echo '<input class="cartButton" type="submit" value="Add to cart">';
+			echo '<input type="hidden" name="add" value="'.$item_id.'">';
+		}
+		echo '</form>';
 	}
 }
 
 //showProductDetail
 function showProductDetail() {
-	$id = $_GET['page'];
-	$data = getSpecificData('product', 'ID', $id);
-	$product = mysqli_fetch_array($data);
-	$image = $product['filename_image'];
-	$name = $product['name'];
-	$price = $product['price'];
-	$descr = $product['item_description'];
-	echo '<li class="menu">';
+	$item_id = $_GET['page'];
+	$data = getSpecificData('product', 'ID', $item_id);
+	$row = mysqli_fetch_array($data);
+	$item_id = $row['ID'];
+	$image = $row['filename_image'];
+	$name = $row['name'];
+	$price = $row['price'];
+	$descr = $row['item_description'];
+	echo '<form class="menu" method="post">';
 	echo '<img class="productimg" src="'.$image.'" alt="'.$name.'"/>';
 	echo '<div class="title">'.$name.'</div></li>';
 	echo '<div class="price">'.$price.'</div></li>';
 	echo '<div>'.$descr.'</div></li>';
+	if (isset($_SESSION['login'])) {
+		echo '<input class="cartButton" type="submit" value="Add to cart">';
+		echo '<input type="hidden" name="add" value="'.$item_id.'">';
+	}
+	echo '</form>';
+	addToCart();
 }
 
 //getRequestedPage
@@ -263,6 +357,10 @@ function processRequest($page) {
 		if ($data == True) {
 			$page = 'Home';
 		}
+		break;
+		case 'Cart';
+		updateCart();
+		$page = 'Cart';
 		break;
 		case is_numeric($page);
 		$page = 'Product';
@@ -299,6 +397,9 @@ function showResponsePage($data){
 		  break;
 		case 'Product';
 		  showProductDetail();
+		  break;
+		case 'Cart';
+		  showShoppingCartPage();
 		  break;
 		case 'Register';
 		  showRegisterPage();

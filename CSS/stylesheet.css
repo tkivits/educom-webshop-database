@@ -27,6 +27,12 @@ body {
 	color: white;
 	text-decoration: none;
 }
+.menu li:hover{
+	background-color: navy;
+}
+.menu li:active{
+	background-color: darkblue;
+}
 .foot {
 	color: white;
 	background-color: black;
@@ -67,5 +73,88 @@ body {
 	text-align: center;
 	font-size: 30px;
 	color: darkred;
+	margin-right: 12px;
 	margin-bottom: 12px;
+}
+.cartButton {
+	display: block;
+	margin-top: 12px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 15px;
+	width: 50%;
+	background-color: lightskyblue;
+}
+.cartButton:hover{
+	background-color: deepskyblue;
+}
+.cartButton:active{
+	background-color: lightskyblue;
+}
+.cartcontainer{
+	width: 100%;
+	height: 85%;
+}
+.cartitems{
+	margin: auto;
+	width: 100%;
+	height: 40%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.imagecontainer{
+	height: 90%;
+	width: 20%;
+	text-align: left;
+	padding-right: 30px;
+	padding-bottom: 10px;
+}
+.about{
+	height: 100%;
+	width: 60%;
+	margin-left: 10px;
+}
+.itemtitle{
+	font-size: 20px;
+	padding-top: 5px;
+}
+.itemprice{
+	text-align: left;
+	font-size: 20px;
+	color: darkred;
+	margin-right: 12px;
+	margin-bottom: 12px;
+}
+.countcontainer{
+	width: 20%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-left: auto;
+}
+.count {
+	width: 30px;
+	height: 30px;
+	box-sizing: border-box;
+	border: 2px solid darkgray;
+	border-radius: 2px;
+	resize: none;
+	text-align: center;
+	font-size: 17px;
+}
+.pricetotalcontainer{
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	height: 100%;
+	text-align: right;
+}
+.priceitemtotal{
+	font-size: 30px;
+	color: darkred;
+	padding-top: 5px;
+	text-align: right;
 }

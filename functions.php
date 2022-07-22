@@ -59,8 +59,7 @@ function showWebshopPage() {
 function showShoppingCart() {
 	echo '<div class="cartcontainer">';
 	if (!isset($_SESSION['cart'])) {
-		echo '<div class="title"> Your shopping cart is empty!</div>';
-		echo '<div class="cart">You can buy products in our <a href="?page=Webshop">webshop</a></div>';
+		include 'emptycartPage.php';
 	} else {
 		showItemsCart($_SESSION['cart']);
 	}
@@ -178,7 +177,7 @@ function checkRegistration() {
 		$email = testInput($_POST['email']);
 		$pw = testInput($_POST['pw']);
 		$pwrepeat = testInput($_POST['pwrepeat']);
-		$data = getData('users', 'email', $email);
+		$data = getRowData('users', 'email', $email);
 		$user = mysqli_fetch_assoc($data);
 	    if (empty($_POST["name"])) {
 		    $namErr = "Name is required";
@@ -189,7 +188,7 @@ function checkRegistration() {
 		    $emailErr = "E-mail is required";
 			} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 				$emailErr = "Invalid e-mail";
-				} elseif (!empty($user['email']) && $user['email'] == $email) {
+				} elseif ($user['email'] == $email) {
 					$emailErr = "E-mail already exists";
 				}
 	    if (empty($_POST["pw"])) {
@@ -214,7 +213,7 @@ function logInUser() {
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
 		$email = testInput($_POST['email']);
 		$pw = testInput($_POST['pw']);
-		$data = getSpecificData('users', 'email',$email);
+		$data = getRowData('users', 'email',$email);
 		$user = mysqli_fetch_assoc($data);
 	    if (empty($email)) {
 		    $emailErr = "E-mail is required";
@@ -290,7 +289,7 @@ function showItemsCart($array){
 		$_SESSION['total'] = array();
 	}
 	foreach ($items as $id => $amount) {
-		$data = getSpecificData('product', 'ID', $id);
+		$data = getRowData('product', 'ID', $id);
 		$item = mysqli_fetch_array($data);
 		$item_id = $item['ID'];
 		$image = $item['filename_image'];
@@ -339,7 +338,7 @@ function showProductOverview() {
 //showProductDetail
 function showProductDetail() {
 	$item_id = $_GET['page'];
-	$data = getSpecificData('product', 'ID', $item_id);
+	$data = getRowData('product', 'ID', $item_id);
 	$row = mysqli_fetch_array($data);
 	$item_id = $row['ID'];
 	$image = $row['filename_image'];

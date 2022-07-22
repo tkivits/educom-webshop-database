@@ -63,7 +63,7 @@ function getColumnData($table, $column) {
 }
 
 //getSpecificData
-function getSpecificData($table, $column, $data){
+function getRowData($table, $column, $data){
 	$sql = "SELECT * FROM $table WHERE $column='$data'";
 	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
 	if (!$conn) {

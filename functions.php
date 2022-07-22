@@ -65,11 +65,28 @@ function showShoppingCart() {
 		showItemsCart($_SESSION['cart']);
 	}
 	echo '</div>';
+
+}
+
+//showCheckoutButton
+function showPlaceOrder() {
+	if (isset($_SESSION['total'])) {
+		$total = number_format(array_sum($_SESSION['total']), 2);
+		echo '<div class="price">Total amount: '.$total.'</div>';
+		echo '<div>';
+		echo '<form method="post">';
+		echo '<div class="accept"><input type="checkbox" id="agree" name="termAgree" value="agree"><label for="agree">I accept all terms & conditions</label></div>';
+		echo '<input class="cartButton" type="submit" value="Place order!">';
+		echo '<input type="hidden" name="placeOrder>';
+		echo '</form>';
+		echo '</div>';
+	}
 }
 
 //showShoppingCartPage
 function showShoppingCartPage() {
 	showShoppingCart();
+	showPlaceOrder();
 }
 
 //showRegisterPage
@@ -206,6 +223,7 @@ function logInUser() {
 		}
 	    if(empty($emailErr) && empty($pwErr)) {
 		    $_SESSION['login'] = True;
+			$_SESSION['user_id'] = $user['ID'];
 		    $_SESSION['email'] = $user['email'];
 		    $_SESSION['name'] = $user['name'];
 		    return True;
@@ -247,13 +265,23 @@ function updateCart() {
 		$_SESSION['cart'][$item_id] = $amount;
 		unset($_POST['CartID']);
 		unset($_POST['amountCart']);
+		return False;
+	}
+	if(isset($_POST['termAgree'])) {
+		registerOrder();
+		return True;
 	}
 }
-
 
 //showItemsCart
 function showItemsCart($array){
 	$items = array_filter($array);
+	if (!isset($_SESSION['total'])) {
+		$_SESSION['total'] = array();
+	} else {
+		unset($_SESSION['total']);
+		$_SESSION['total'] = array();
+	}
 	foreach ($items as $id => $amount) {
 		$data = getSpecificData('product', 'ID', $id);
 		$item = mysqli_fetch_array($data);
@@ -262,9 +290,6 @@ function showItemsCart($array){
 		$name = $item['name'];
 		$price = $item['price'];
 		$item_total = number_format($amount * $price, 2);
-		if (isset($_POST['amount'])) {
-			$amount = htmlspecialchars($_POST['amount']);
-		}
 		echo '<div class="cartitems">';
 		echo '<div class="imagecontainer"><a href="?page='.$item_id.'"><img class="productimg" src="'.$image.'" alt="'.$name.'"/></a></div>';
 		echo '<div class="about">';
@@ -275,10 +300,11 @@ function showItemsCart($array){
 		echo '<form method="post">';
 		echo '<textarea class="count" id="amountCart" name="amountCart">'.$amount.'</textarea>';
 		echo '<input type="hidden" name="CartID" value="'.$item_id.'">';
-		echo '<input class="cartButton" type="submit" value="Update"></div>';
-		echo '</form>';
+		echo '<input class="cartButton" type="submit" value="Update">';
+		echo '</form></div>';
 		echo '<div class="pricetotalcontainer"><div class="priceitemtotal">'.$item_total.'</div></div>';
 		echo '</div>';
+		array_push($_SESSION['total'], $item_total);
 	}
 }
 
@@ -359,8 +385,12 @@ function processRequest($page) {
 		}
 		break;
 		case 'Cart';
-		updateCart();
-		$page = 'Cart';
+		$data = updateCart();
+		if ($data == True) {
+			$page = 'Home';
+		} else {
+			$page = 'Cart';
+		}
 		break;
 		case is_numeric($page);
 		$page = 'Product';

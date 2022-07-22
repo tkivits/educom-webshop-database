@@ -16,6 +16,28 @@ function registerNewUser($email, $name, $pw) {
 	mysqli_close($conn);
 }
 
+//registerOrder
+function registerOrder() {
+	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
+	if (!$conn) {
+		die("Something went wrong. Please try again later");
+	}
+	$user_id = $_SESSION['user_id'];
+	$total = number_format(array_sum($_SESSION['total']), 2);
+	$sql = "INSERT INTO orders (user_id, total) VALUES ('$user_id', '$total')";
+	mysqli_query($conn, $sql);
+	$sql = "SELECT ID FROM orders WHERE ID=(SELECT max(ID) FROM orders)";
+	$data = mysqli_query($conn, $sql);
+	$row = mysqli_fetch_array($data);
+	$order_id = $row['ID'];
+	$items = array_filter($_SESSION['cart']);
+	foreach ($items as $product_id => $qty) {
+		$sql = "INSERT INTO order_item (order_id, product_id, quantity) VALUES ('$order_id', '$product_id', '$qty')";
+		mysqli_query($conn, $sql);
+	}
+	mysqli_close($conn);
+}
+
 //getData
 function getData($table){
 	$sql = "SELECT * FROM $table";

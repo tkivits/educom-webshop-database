@@ -89,6 +89,13 @@ function showShoppingCartPage() {
 	showPlaceOrder();
 }
 
+//showYourOrder
+function showYourOrder(){
+	unset($_SESSION['cart']);
+	unset($_SESSION['total']);
+	echo '<div class="title">Thank you for your order!</div>';
+}
+
 //showRegisterPage
 function showRegisterPage() {
 	global $namErr, $emailErr, $pwErr, $pwRepeatErr;
@@ -387,7 +394,7 @@ function processRequest($page) {
 		case 'Cart';
 		$data = updateCart();
 		if ($data == True) {
-			$page = 'Home';
+			$page = 'YourOrder';
 		} else {
 			$page = 'Cart';
 		}
@@ -430,6 +437,9 @@ function showResponsePage($data){
 		  break;
 		case 'Cart';
 		  showShoppingCartPage();
+		  break;
+		case 'YourOrder';
+		  showYourOrder();
 		  break;
 		case 'Register';
 		  showRegisterPage();

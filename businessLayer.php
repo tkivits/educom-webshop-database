@@ -70,8 +70,6 @@ function checkRegistration() {
 		$email = testInput($_POST['email']);
 		$pw = testInput($_POST['pw']);
 		$pwrepeat = testInput($_POST['pwrepeat']);
-		$data = getRowData('users', 'email', $email);
-		$user = mysqli_fetch_assoc($data);
 	    if (empty($_POST["name"])) {
 		    $namErr = "Name is required";
 	    } elseif (!preg_match("/^[a-zA-Z-' ]*$/",$name)) {
@@ -81,8 +79,6 @@ function checkRegistration() {
 		    $emailErr = "E-mail is required";
 			} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 				$emailErr = "Invalid e-mail";
-				} elseif ($user['email'] == $email) {
-					$emailErr = "E-mail already exists";
 				}
 	    if (empty($_POST["pw"])) {
 		    $pwErr = "Password is required";
@@ -91,6 +87,10 @@ function checkRegistration() {
 		    $pwRepeatErr = "Please repeat your password";
 	    } elseif ($pw !== $pwrepeat) {
 			$pwRepeatErr = "Entered passwords do not match";
+		}
+		$user = findUserByEmail($email);
+		if (isset($user['email'])) {
+			$emailErr = "E-mail already exists";
 		}
 		if (empty($namErr) && empty($emailErr) && empty($pwErr) && empty($pwRepeatErr)) {
 			registerNewUser($email, $name, $pw);

@@ -2,7 +2,6 @@
 session_start();
 require 'businessLayer.php';
 
-
 //showBodyStart
 function showDocStart() {
     echo '<!DOCTYPE html>

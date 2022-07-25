@@ -36,6 +36,23 @@ function registerOrder() {
 	mysqli_close($conn);
 }
 
+//findUserByEmail
+function findUserByEmail($email) {
+	$sql = "SELECT * FROM users WHERE email='$email'";
+	$conn = connectToDB();
+	try {
+		$result = mysqli_query($conn, $sql);
+		if (!$result) {
+			throw new Exception("findUserByEmail query failed, SQL: ".$sql." error: ".mysqli_error($conn));
+		}
+		$user = mysqli_fetch_assoc($result);
+		return $user;
+	}
+	finally {
+		mysqli_close($conn);
+	}
+}
+
 //getData
 function getData($table){
 	$sql = "SELECT * FROM $table";

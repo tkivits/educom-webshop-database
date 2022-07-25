@@ -141,9 +141,9 @@ function addToCart(){
 	if(isset($_POST['add'])){
 		$id = testInput($_POST['add']);
 		if (!isset($_SESSION['cart'])) {
-			$data = getColumnData('product', 'ID');
+			$products = getAllProducts();
 			$_SESSION['cart'] = array();
-			while ($row = mysqli_fetch_array($data)) {
+			while ($row = mysqli_fetch_array($products)) {
 				$single_id = $row['ID'];
 				$_SESSION['cart'][$single_id] = '0';
 			}

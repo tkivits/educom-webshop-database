@@ -1,6 +1,9 @@
 <?php
 
 //connectToDB
+
+use JetBrains\PhpStorm\ExpectedValues;
+
 function connectToDB() {
 	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
 	if (!$conn) {
@@ -47,6 +50,22 @@ function findUserByEmail($email) {
 		}
 		$user = mysqli_fetch_assoc($result);
 		return $user;
+	}
+	finally {
+		mysqli_close($conn);
+	}
+}
+
+//getAllProducts
+function getAllProducts() {
+	$sql = "SELECT * FROM product";
+	$conn = connectToDB();
+	try {
+		$products = mysqli_query($conn, $sql);
+		if (!$products) {
+			throw new Exception("getAllProducts query failed, SQL: ".$sql." error: ".mysqli_error($conn));
+		}
+		return $products;
 	}
 	finally {
 		mysqli_close($conn);

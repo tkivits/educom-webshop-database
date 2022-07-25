@@ -240,6 +240,7 @@ function logInUser() {
 //logOutUser
 function logOutUser() {
 	session_unset();
+	session_destroy();
 }
 
 //addToCart

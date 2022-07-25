@@ -125,48 +125,42 @@ function showItemsCart($array){
 		unset($_SESSION['total']);
 		$_SESSION['total'] = array();
 	}
-	foreach ($items as $id => $amount) {
-		$data = getRowData('product', 'ID', $id);
-		$item = mysqli_fetch_array($data);
-		$item_id = $item['ID'];
-		$image = $item['filename_image'];
-		$name = $item['name'];
-		$price = $item['price'];
-		$item_total = number_format($amount * $price, 2);
-		echo '<div class="cartitems">';
-		echo '<div class="imagecontainer"><a href="?page='.$item_id.'"><img class="productimg" src="'.$image.'" alt="'.$name.'"/></a></div>';
-		echo '<div class="about">';
-		echo '<div class="itemtitle">'.$name.'</div>';
-		echo '<div class="itemprice">'.$price.'</div>';
-		echo '</div>';
-		echo '<div class="countcontainer">';
-		echo '<form method="post">';
-		echo '<textarea class="count" id="amountCart" name="amountCart">'.$amount.'</textarea>';
-		echo '<input type="hidden" name="CartID" value="'.$item_id.'">';
-		echo '<input class="cartButton" type="submit" value="Update">';
-		echo '</form></div>';
-		echo '<div class="pricetotalcontainer"><div class="priceitemtotal">'.$item_total.'</div></div>';
-		echo '</div>';
-		array_push($_SESSION['total'], $item_total);
+    $products = getAllProducts();
+    while ($product = mysqli_fetch_array($products))
+    {
+        if (array_key_exists($product['ID'], $items)) {
+		    $item_total = number_format($items[$product['ID']] * $product['price'], 2);
+		    echo '<div class="cartitems">';
+		    echo '<div class="imagecontainer"><a href="?page='.$product['ID'].'"><img class="productimg" src="'.$product['filename_image'].'" alt="'.$product['name'].'"/></a></div>';
+		    echo '<div class="about">';
+		    echo '<div class="itemtitle">'.$product['name'].'</div>';
+		    echo '<div class="itemprice">'.$product['price'].'</div>';
+		    echo '</div>';
+		    echo '<div class="countcontainer">';
+		    echo '<form method="post">';
+		    echo '<textarea class="count" id="amountCart" name="amountCart">'.$items[$product['ID']].'</textarea>';
+		    echo '<input type="hidden" name="CartID" value="'.$product['ID'].'">';
+		    echo '<input class="cartButton" type="submit" value="Update">';
+		    echo '</form></div>';
+		    echo '<div class="pricetotalcontainer"><div class="priceitemtotal">'.$item_total.'</div></div>';
+		    echo '</div>';
+		    array_push($_SESSION['total'], $item_total);
+        }
 	}
 }
 
 //showProductOverview
 function showProductOverview() {
-	$product_data = getData('product');
-	while ($row = mysqli_fetch_array($product_data))
+	$products = getAllProducts();
+	while ($product = mysqli_fetch_array($products))
 	{
-		$item_id = $row['ID'];
-		$image = $row['filename_image'];
-		$name = $row['name'];
-		$price = $row['price'];
 		echo '<form class="menu" method="post">';
-		echo '<a href="?page='.$item_id.'"><img class="productimg" src="'.$image.'" alt="'.$name.'"/></a>';
-		echo '<div class="title">'.$name.'</div>';
-		echo '<div class="price">'.$price.'</div>';
+		echo '<a href="?page='.$product['ID'].'"><img class="productimg" src="'.$product['filename_image'].'" alt="'.$product['name'].'"/></a>';
+		echo '<div class="title">'.$product['name'].'</div>';
+		echo '<div class="price">'.$product['price'].'</div>';
 		if (isset($_SESSION['login'])){
 			echo '<input class="cartButton" type="submit" value="Add to cart">';
-			echo '<input type="hidden" name="add" value="'.$item_id.'">';
+			echo '<input type="hidden" name="add" value="'.$product['ID'].'">';
 		}
 		echo '</form>';
 	}
@@ -174,22 +168,17 @@ function showProductOverview() {
 
 //showProductDetail
 function showProductDetail() {
-	$item_id = $_GET['page'];
-	$data = getRowData('product', 'ID', $item_id);
-	$row = mysqli_fetch_array($data);
-	$item_id = $row['ID'];
-	$image = $row['filename_image'];
-	$name = $row['name'];
-	$price = $row['price'];
-	$descr = $row['item_description'];
+	$itemid = $_GET['page'];
+	$data = getSingleProduct($itemid);
+	$product = mysqli_fetch_array($data);
 	echo '<form class="menu" method="post">';
-	echo '<img class="productimg" src="'.$image.'" alt="'.$name.'"/>';
-	echo '<div class="title">'.$name.'</div></li>';
-	echo '<div class="price">'.$price.'</div></li>';
-	echo '<div>'.$descr.'</div></li>';
+	echo '<img class="productimg" src="'.$product['filename_image'].'" alt="'.$product['name'].'"/>';
+	echo '<div class="title">'.$product['name'].'</div></li>';
+	echo '<div class="price">'.$product['price'].'</div></li>';
+	echo '<div>'.$product['item_description'].'</div></li>';
 	if (isset($_SESSION['login'])) {
 		echo '<input class="cartButton" type="submit" value="Add to cart">';
-		echo '<input type="hidden" name="add" value="'.$item_id.'">';
+		echo '<input type="hidden" name="add" value="'.$product['ID'].'">';
 	}
 	echo '</form>';
 	addToCart();

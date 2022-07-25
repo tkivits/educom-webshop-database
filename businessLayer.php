@@ -145,7 +145,7 @@ function addToCart(){
 			$_SESSION['cart'] = array();
 			while ($row = mysqli_fetch_array($products)) {
 				$single_id = $row['ID'];
-				$_SESSION['cart'][$single_id] = '0';
+				$_SESSION['cart'][$single_id] = 0;
 			}
 		}
 		if ($_SESSION['cart'][$id] >= 0) {

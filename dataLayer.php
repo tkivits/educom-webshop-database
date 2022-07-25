@@ -72,6 +72,22 @@ function getAllProducts() {
 	}
 }
 
+//getSingleProduct
+function getSingleProduct($id) {
+	$sql = "SELECT * FROM product WHERE ID=$id";
+	$conn = connectToDB();
+	try {
+		$product = mysqli_query($conn, $sql);
+		if (!$product) {
+			throw new Exception("getSingleProduct query failed, SQL: ".$sql." error: ".mysqli_error($conn));
+		}
+		return $product;
+	}
+	finally {
+		mysqli_close($conn);
+	}
+}
+
 //getData
 function getData($table){
 	$sql = "SELECT * FROM $table";

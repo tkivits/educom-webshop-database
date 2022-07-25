@@ -1,22 +1,25 @@
 <?php
 
+//connectToDB
+function connectToDB() {
+	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
+	if (!$conn) {
+		die("foutje"); //Moet nog een exception worden
+	}
+	return $conn;
+}
+
 //registerNewUser
 function registerNewUser($email, $name, $pw) {
 	$sql = "INSERT INTO users (email, name, password) VALUES ('$email', '$name', '$pw')";
-	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
-	if (!$conn) {
-		die("Something went wrong. Please try again later");
-	}
+	$conn = connectToDB();
 	mysqli_query($conn, $sql);
 	mysqli_close($conn);
 }
 
 //registerOrder
 function registerOrder() {
-	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
-	if (!$conn) {
-		die("Something went wrong. Please try again later");
-	}
+	$conn = connectToDB();
 	$user_id = $_SESSION['user_id'];
 	$total = number_format(array_sum($_SESSION['total']), 2);
 	$sql = "INSERT INTO orders (user_id, total) VALUES ('$user_id', '$total')";
@@ -36,10 +39,7 @@ function registerOrder() {
 //getData
 function getData($table){
 	$sql = "SELECT * FROM $table";
-	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
-	if (!$conn) {
-		die("Something went wrong. Please try again later.");
-	}
+	$conn = connectToDB();
 	$query = mysqli_query($conn, $sql);
 	mysqli_close($conn);
 	return $query;
@@ -48,10 +48,7 @@ function getData($table){
 //getRowData
 function getColumnData($table, $column) {
 	$sql = "SELECT $column FROM $table";
-	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
-	if (!$conn) {
-		die("Something went wrong. Please try again later.");
-	}
+	$conn = connectToDB();
 	$query = mysqli_query($conn, $sql);
 	mysqli_close($conn);
 	return $query;
@@ -60,10 +57,7 @@ function getColumnData($table, $column) {
 //getSpecificData
 function getRowData($table, $column, $data){
 	$sql = "SELECT * FROM $table WHERE $column='$data'";
-	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
-	if (!$conn) {
-		die("Something went wrong. Please try again later");
-	}
+	$conn = connectToDB();
 	$query = mysqli_query($conn, $sql);
 	mysqli_close($conn);
 	return $query;

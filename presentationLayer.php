@@ -1,21 +1,25 @@
 <?php
+//Prerequisites
 session_start();
 require 'businessLayer.php';
+require 'dataLayer.php';
 
 //showBodyStart
 function showDocStart() {
-    echo '<!DOCTYPE html>
-          <html>
-          <head>
-          <link rel="stylesheet" href="CSS/stylesheet.css">
-          </head>
-          <body>';
+    echo 
+        '<!DOCTYPE html>
+        <html>
+        <head>
+        <link rel="stylesheet" href="CSS/stylesheet.css">
+        </head>
+        <body>';
 }
 
 //showBodyEnd
 function showDocEnd() {
-    echo '</body>
-          </html>';
+    echo 
+        '</body>
+        </html>';
 }
 
 //showHeader
@@ -30,6 +34,11 @@ function showHeader($page) {
 //showMenu
 function showMenu() {
 	include 'Pages/menu.php';
+}
+
+//showFooter
+function showFooter() {
+	include 'Pages/footer.php';
 }
 
 //showHomePage
@@ -53,50 +62,45 @@ function showContactThanksPage() {
 	include 'Pages/contactthanks.php';
 }
 
+//showProductOverview
+function showProductOverview() {
+	$products = getAllProducts();
+	while ($product = mysqli_fetch_array($products))
+	{
+		echo '<form class="menu" method="post">';
+		echo '<a href="?page='.$product['ID'].'"><img class="productimg" src="'.$product['filename_image'].'" alt="'.$product['name'].'"/></a>';
+		echo '<div class="title">'.$product['name'].'</div>';
+		echo '<div class="price">'.$product['price'].'</div>';
+		if (isset($_SESSION['login'])){
+			echo '<input class="cartButton" type="submit" value="Add to cart">';
+			echo '<input type="hidden" name="add" value="'.$product['ID'].'">';
+		}
+		echo '</form>';
+	}
+}
+
 //showWebshopPage
 function showWebshopPage() {
 	showProductOverview();
 	addToCart();
 }
 
-//showShoppingCart
-function showShoppingCart() {
-	echo '<div class="cartcontainer">';
-	if (!isset($_SESSION['cart'])) {
-		include 'Pages/emptycartPage.php';
-	} else {
-		showItemsCart($_SESSION['cart']);
+//showProductDetail
+function showProductDetail() {
+	$itemid = $_GET['page'];
+	$data = getSingleProduct($itemid);
+	$product = mysqli_fetch_array($data);
+	echo '<form class="menu" method="post">';
+	echo '<img class="productimg" src="'.$product['filename_image'].'" alt="'.$product['name'].'"/>';
+	echo '<div class="title">'.$product['name'].'</div></li>';
+	echo '<div class="price">'.$product['price'].'</div></li>';
+	echo '<div>'.$product['item_description'].'</div></li>';
+	if (isset($_SESSION['login'])) {
+		echo '<input class="cartButton" type="submit" value="Add to cart">';
+		echo '<input type="hidden" name="add" value="'.$product['ID'].'">';
 	}
-	echo '</div>';
-
-}
-
-//showCheckoutButton
-function showPlaceOrder() {
-	if (isset($_SESSION['total'])) {
-		$total = number_format(array_sum($_SESSION['total']), 2);
-		echo '<div class="price">Total amount: '.$total.'</div>';
-		echo '<div>';
-		echo '<form method="post">';
-		echo '<div class="accept"><input type="checkbox" id="agree" name="termAgree" value="agree"><label for="agree">I accept all terms & conditions</label></div>';
-		echo '<input class="cartButton" type="submit" value="Place order!">';
-		echo '<input type="hidden" name="placeOrder>';
-		echo '</form>';
-		echo '</div>';
-	}
-}
-
-//showShoppingCartPage
-function showShoppingCartPage() {
-	showShoppingCart();
-	showPlaceOrder();
-}
-
-//showYourOrder
-function showYourOrder(){
-	unset($_SESSION['cart']);
-	unset($_SESSION['total']);
-	echo '<div class="title">Thank you for your order!</div>';
+	echo '</form>';
+	addToCart();
 }
 
 //showRegisterPage
@@ -109,11 +113,6 @@ function showRegisterPage() {
 function showLoginPage() {
 	global $emailErr, $pwErr;
 	include 'Pages/login.php';
-}
-
-//showFooter
-function showFooter() {
-	include 'Pages/footer.php';
 }
 
 //showItemsCart
@@ -149,39 +148,39 @@ function showItemsCart($array){
 	}
 }
 
-//showProductOverview
-function showProductOverview() {
-	$products = getAllProducts();
-	while ($product = mysqli_fetch_array($products))
-	{
-		echo '<form class="menu" method="post">';
-		echo '<a href="?page='.$product['ID'].'"><img class="productimg" src="'.$product['filename_image'].'" alt="'.$product['name'].'"/></a>';
-		echo '<div class="title">'.$product['name'].'</div>';
-		echo '<div class="price">'.$product['price'].'</div>';
-		if (isset($_SESSION['login'])){
-			echo '<input class="cartButton" type="submit" value="Add to cart">';
-			echo '<input type="hidden" name="add" value="'.$product['ID'].'">';
-		}
+//showCheckoutButton
+function showPlaceOrder() {
+	if (isset($_SESSION['total'])) {
+		$total = number_format(array_sum($_SESSION['total']), 2);
+		echo '<div class="price">Total amount: '.$total.'</div>';
+		echo '<div>';
+		echo '<form method="post">';
+		echo '<div class="accept"><input type="checkbox" id="agree" name="termAgree" value="agree"><label for="agree">I accept all terms & conditions</label></div>';
+		echo '<input class="cartButton" type="submit" value="Place order!">';
+		echo '<input type="hidden" name="placeOrder>';
 		echo '</form>';
+		echo '</div>';
 	}
 }
 
-//showProductDetail
-function showProductDetail() {
-	$itemid = $_GET['page'];
-	$data = getSingleProduct($itemid);
-	$product = mysqli_fetch_array($data);
-	echo '<form class="menu" method="post">';
-	echo '<img class="productimg" src="'.$product['filename_image'].'" alt="'.$product['name'].'"/>';
-	echo '<div class="title">'.$product['name'].'</div></li>';
-	echo '<div class="price">'.$product['price'].'</div></li>';
-	echo '<div>'.$product['item_description'].'</div></li>';
-	if (isset($_SESSION['login'])) {
-		echo '<input class="cartButton" type="submit" value="Add to cart">';
-		echo '<input type="hidden" name="add" value="'.$product['ID'].'">';
+//showShoppingCart
+function showShoppingCartPage() {
+	echo '<div class="cartcontainer">';
+	if (!isset($_SESSION['cart'])) {
+		include 'Pages/emptycartPage.php';
+	} else {
+		showItemsCart($_SESSION['cart']);
+        showPlaceOrder();
 	}
-	echo '</form>';
-	addToCart();
+	echo '</div>';
+
+}
+
+//showYourOrder
+function showYourOrder(){
+	unset($_SESSION['cart']);
+	unset($_SESSION['total']);
+	echo '<div class="title">Thank you for your order!</div>';
 }
 
 //getRequestedPage

@@ -1,6 +1,4 @@
 <?php
-//data_layer
-require 'dataLayer.php';
 
 //variabelen
 $salErr = $namErr = $emailErr = $phonErr = $comprefErr = $messErr = $pwErr = $pwRepeatErr = "";
@@ -106,19 +104,22 @@ function logInUser() {
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
 		$email = testInput($_POST['email']);
 		$pw = testInput($_POST['pw']);
-		$data = getRowData('users', 'email',$email);
-		$user = mysqli_fetch_assoc($data);
 	    if (empty($email)) {
 		    $emailErr = "E-mail is required";
 	    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			$emailErr = "Invalid e-mail";
-		} elseif (empty($user) || $user['email'] !== $email) {
-		    $emailErr = "Unknown e-mail";
 		}
 	    if (empty($pw)) {
 		    $pwErr = "Password is required";
-		} elseif (empty($user) || $user['password'] !== $pw) {
-			$pwErr = "E-mail doesn't match password";
+		}
+		if(empty($emailErr) && empty($pwErr)) {
+			$user = findUserByEmail($email);
+			if (empty($user) || $user['email'] !== $email) {
+				$emailErr= "Unknown e-mail";
+			}
+			if (empty($user) || $user['password'] !== $pw) {
+				$pwErr = "E-mail doesn't match password";
+			}
 		}
 	    if(empty($emailErr) && empty($pwErr)) {
 		    $_SESSION['login'] = True;

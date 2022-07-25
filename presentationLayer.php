@@ -4,7 +4,7 @@ require 'businessLayer.php';
 
 
 //showBodyStart
-function showBodyStart() {
+function showDocStart() {
     echo '<!DOCTYPE html>
           <html>
           <head>
@@ -14,7 +14,7 @@ function showBodyStart() {
 }
 
 //showBodyEnd
-function showBodyEnd() {
+function showDocEnd() {
     echo '</body>
           </html>';
 }
@@ -250,7 +250,7 @@ function processRequest($page) {
 
 //showResponsePage
 function showResponsePage($data){
-    showBodyStart();
+    showDocStart();
 	showHeader($data);
 	showMenu();
 	switch($data)
@@ -289,7 +289,7 @@ function showResponsePage($data){
 		  showHomePage();
 	}
 	showFooter();
-    showBodyEnd();
+    showDocEnd();
 }
 
 ?>

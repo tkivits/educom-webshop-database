@@ -142,8 +142,8 @@ body {
 	padding-left: auto;
 }
 .count {
-	width: 30px;
-	height: 30px;
+	width: 40px;
+	height: 25px;
 	box-sizing: border-box;
 	border: 2px solid darkgray;
 	border-radius: 2px;

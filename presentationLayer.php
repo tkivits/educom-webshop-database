@@ -137,7 +137,7 @@ function showItemsCart($array){
 		    echo '</div>';
 		    echo '<div class="countcontainer">';
 		    echo '<form method="post">';
-		    echo '<textarea class="count" id="amountCart" name="amountCart">'.$items[$product['ID']].'</textarea>';
+		    echo '<input type="number" class="count" id="amountCart" name="amountCart" value="'.$items[$product['ID']].'">';
 		    echo '<input type="hidden" name="CartID" value="'.$product['ID'].'">';
 		    echo '<input class="cartButton" type="submit" value="Update">';
 		    echo '</form></div>';

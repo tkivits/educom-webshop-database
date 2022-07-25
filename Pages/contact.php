@@ -1,7 +1,3 @@
-<!DOCTYPE html>
-<html>
-<body>
-
 <div><span class="error">Fields with a * are required!</span></div>
 <form class="form" method="post" action="<?php echo htmlspecialchars('?page=Contact');?>">
 <div><label for="salutation"></label>
@@ -29,6 +25,3 @@
 <span class="error">* <?php echo $messErr ?></div>
 <input type="submit" value="Submit">
 </form>
- 
-</body>
-</html>

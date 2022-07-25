@@ -1,6 +1,23 @@
 <?php
-
+session_start();
 require 'businessLayer.php';
+
+
+//showBodyStart
+function showBodyStart() {
+    echo '<!DOCTYPE html>
+          <html>
+          <head>
+          <link rel="stylesheet" href="CSS/stylesheet.css">
+          </head>
+          <body>';
+}
+
+//showBodyEnd
+function showBodyEnd() {
+    echo '</body>
+          </html>';
+}
 
 //showHeader
 function showHeader($page) {
@@ -233,6 +250,7 @@ function processRequest($page) {
 
 //showResponsePage
 function showResponsePage($data){
+    showBodyStart();
 	showHeader($data);
 	showMenu();
 	switch($data)
@@ -271,6 +289,7 @@ function showResponsePage($data){
 		  showHomePage();
 	}
 	showFooter();
+    showBodyEnd();
 }
 
 ?>

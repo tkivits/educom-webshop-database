@@ -1,8 +1,3 @@
-<!DOCTYPE html>
-
-<html>
-<body>
-
 <?php
 
 //registerNewUser
@@ -75,6 +70,3 @@ function getRowData($table, $column, $data){
 }
 
 ?>
-
-</body>
-</html>

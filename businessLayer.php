@@ -1,13 +1,4 @@
 <?php
-session_start()
-?>
-
-<!DOCTYPE html>
-
-<html>
-<body>
-
-<?php
 //data_layer
 require 'dataLayer.php';
 
@@ -183,5 +174,3 @@ function updateCart() {
 }
 
 ?>
-</body>
-</html>

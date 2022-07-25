@@ -1,7 +1,3 @@
-<!DOCTYPE html>
-
-<html>
-<body>
 
 <div><span class="error">Fields with a * are required</span></div> 
 <form class="form" method="post" action="<?php echo htmlspecialchars('?page=Register');?>">
@@ -26,7 +22,4 @@
 	};?>">
     <span class="error">* <?php echo $pwRepeatErr; ?></span></div>
   <input type="submit" value="Register">
- </form>
-
-</body>
-</html>
+</form>

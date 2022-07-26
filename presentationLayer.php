@@ -52,8 +52,7 @@ function showAboutPage() {
 }
 
 //showContactPage
-function showContactPage() {
-	global $salErr, $namErr, $emailErr, $phonErr, $comprefErr, $messErr;
+function showContactPage($data) {
 	include 'Pages/contact.php';
 }
 
@@ -205,8 +204,10 @@ function processRequest($page) {
 		break;
 		case 'Register';
 		$data = checkRegistration();
-		if ($data == True) {
+		if ($data['valid'] == True) {
 			$page = 'Login';
+		} else {
+			showContactPage($data);
 		}
 		break;
 		case 'Login';

@@ -13,7 +13,9 @@ function testInput($data) {
 
 //testContact
 function testContact() {
-	global $salErr, $namErr, $emailErr, $phonErr, $comprefErr, $messErr;
+	$salErr = $namErr = $emailErr = $phonErr = $comprefErr = $messErr = "";
+	$sal = $name = $email = $phone = $compref = $mess = "";
+	$valid = False;
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
 	  if(empty($_POST["sal"])) {
       $salErr = "Salutation is required";
@@ -55,8 +57,9 @@ function testContact() {
         $mess = testInput($_POST["mess"]);
       }
       if(empty($salErr) && empty($namErr) && empty($emailErr) && empty($phonErr) && empty($comprefErr) && empty($messErr)) {
-        return True;
+		$valid = True
       }
+	  return array('sal' => $sal, 'salErr' => $salErr, 'name' => $name, 'namErr' => $namErr, 'email' => $email, 'emailErr' => $emailErr, 'phone' => $phone, 'phonErr' => $phonErr, 'compref' => $compref, 'comprefErr' => $comprefErr, 'mess' => $mess, 'messErr' => $messErr, 'valid' => $valid)
 	}
 }
 

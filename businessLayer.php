@@ -13,7 +13,7 @@ function logError($msg) {
 }
 
 //setTotalArray
-function setTotalArray() {
+function setSessionTotal() {
 	if (!isset($_SESSION['total'])) {
 		$_SESSION['total'] = array();
 	} else {

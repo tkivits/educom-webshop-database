@@ -140,7 +140,7 @@ function showLoginPage($data) {
 //showItemsCart
 function showItemsCart($array){
 	$items = array_filter($array);
-	setTotalArray();
+	setSessionTotal();
 	try {
 		$products = getAllProducts();
 		while ($product = mysqli_fetch_array($products))

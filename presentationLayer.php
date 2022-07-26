@@ -196,26 +196,20 @@ function processRequest($page) {
 	{
 		case 'Contact';
 		$data = testContact();
-		if ($data == True) {
-			showContactThanksPage($data);
-		}  else {
-			showContactPage($data);
+		if (isset($data['valid']) && $data['valid'] == True) {
+			$page = 'Thanks';
 		}
 		break;
 		case 'Register';
 		$data = checkRegistration();
-		if ($data['valid'] == True) {
+		if (isset($data['valid']) && $data['valid'] == True) {
 			$page = 'Login';
-		} else {
-			showRegisterPage($data);
 		}
 		break;
 		case 'Login';
 		$data = logInUser();
-		if ($data == True) {
+		if (isset($data['valid']) && $data['valid'] == True) {
 			$page = 'Home';
-		} else {
-			showLoginPage($data);
 		}
 		break;
 		case 'Cart';
@@ -234,16 +228,16 @@ function processRequest($page) {
 		$page = 'Home';
 		break;
 	}
-	$data = $page;
+	$data['page'] = $page;
 	return $data;
 }
 
 //showResponsePage
 function showResponsePage($data){
     showDocStart();
-	showHeader($data);
+	showHeader($data['page']);
 	showMenu();
-	switch($data)
+	switch($data['page'])
 	{
 		case 'Home';
 		  showHomePage();
@@ -252,10 +246,10 @@ function showResponsePage($data){
 		  showAboutPage();
 		  break;
 		case 'Contact';
-		  showContactPage();
+		  showContactPage($data);
 		  break;
 		case 'Thanks';
-		  showContactThanksPage();
+		  showContactThanksPage($data);
 		  break;
 		case 'Webshop';
 		  showWebshopPage();
@@ -270,10 +264,10 @@ function showResponsePage($data){
 		  showYourOrder();
 		  break;
 		case 'Register';
-		  showRegisterPage();
+		  showRegisterPage($data);
 		  break;
 		case 'Login';
-		  showLoginPage();
+		  showLoginPage($data);
 		  break;
 		default; 
 		  showHomePage();

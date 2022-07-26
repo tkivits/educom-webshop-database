@@ -53,9 +53,9 @@ function testContact() {
         $mess = testInput($_POST["mess"]);
       }
       if(empty($salErr) && empty($namErr) && empty($emailErr) && empty($phonErr) && empty($comprefErr) && empty($messErr)) {
-		$valid = True
+		$valid = True;
       }
-	  return array('sal' => $sal, 'salErr' => $salErr, 'name' => $name, 'namErr' => $namErr, 'email' => $email, 'emailErr' => $emailErr, 'phone' => $phone, 'phonErr' => $phonErr, 'compref' => $compref, 'comprefErr' => $comprefErr, 'mess' => $mess, 'messErr' => $messErr, 'valid' => $valid)
+	  return array('sal' => $sal, 'salErr' => $salErr, 'name' => $name, 'namErr' => $namErr, 'email' => $email, 'emailErr' => $emailErr, 'phone' => $phone, 'phonErr' => $phonErr, 'compref' => $compref, 'comprefErr' => $comprefErr, 'mess' => $mess, 'messErr' => $messErr, 'valid' => $valid);
 	}
 }
 
@@ -95,7 +95,7 @@ function checkRegistration() {
 			registerNewUser($email, $name, $pw);
 		    $valid = True;
 		}
-		return array('name' => $name, 'namErr' => $namErr, 'email' => $email, 'emailErr' => $emailErr, 'pw' => $pw, 'pwErr' => $pwErr, 'pwRepeat' => $pwrepeat, 'pwRepeatErr' => $pwRepeatErr, 'valid' => $valid)
+		return array('name' => $name, 'namErr' => $namErr, 'email' => $email, 'emailErr' => $emailErr, 'pw' => $pw, 'pwErr' => $pwErr, 'pwRepeat' => $pwrepeat, 'pwRepeatErr' => $pwRepeatErr, 'valid' => $valid);
 	} 
 }
 
@@ -103,7 +103,7 @@ function checkRegistration() {
 function logInUser() {
 	$emailErr = $pwErr = "";
 	$email = $pw = "";
-	$valid = False
+	$valid = False;
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
 		$email = testInput($_POST['email']);
 		$pw = testInput($_POST['pw']);

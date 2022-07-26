@@ -12,6 +12,16 @@ function logError($msg) {
 	echo "LOG TO SERVER: ".$msg;
 }
 
+//setTotalArray
+function setTotalArray() {
+	if (!isset($_SESSION['total'])) {
+		$_SESSION['total'] = array();
+	} else {
+		unset($_SESSION['total']);
+		$_SESSION['total'] = array();
+	}
+}
+
 //testContact
 function testContact() {
 	$salErr = $namErr = $emailErr = $phonErr = $comprefErr = $messErr = "";

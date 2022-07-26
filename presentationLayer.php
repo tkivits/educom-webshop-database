@@ -84,15 +84,20 @@ function showContactThanksPage($data) {
 
 //showProductOverview
 function showProductOverview() {
-	$products = getAllProducts();
-	while ($product = mysqli_fetch_array($products))
-	{
-		echo '<div class="menu">';
-		showDetailOfProduct($product['ID'], $product['filename_image'], $product['name'], $product['price']);
-		if (isset($_SESSION['login'])){
-			showActionForm($product['ID'], 'Add to Cart', 'add');
+	try {
+		$products = getAllProducts();
+		while ($product = mysqli_fetch_array($products))
+		{
+			echo '<div class="menu">';
+			showDetailOfProduct($product['ID'], $product['filename_image'], $product['name'], $product['price']);
+			if (isset($_SESSION['login'])){
+				showActionForm($product['ID'], 'Add to Cart', 'add');
+			}
+			echo '</div>';
 		}
-		echo '</div>';
+	} catch (Exception $e) {
+		logError($e);
+		echo 'There seems to be a technical issue. Please try again later.';
 	}
 }
 
@@ -104,16 +109,21 @@ function showWebshopPage() {
 
 //showProductDetailPage
 function showProductDetailPage() {
-	$itemid = $_GET['page'];
-	$data = getSingleProduct($itemid);
-	$product = mysqli_fetch_array($data);
-	echo '<div class="menu">';
-	showDetailOfProduct($product['ID'], $product['filename_image'], $product['name'], $product['price']);
-	echo '<div>'.$product['item_description'].'</div></li>';
-	if (isset($_SESSION['login'])) {
-		showActionForm($product['ID'], 'Add to Cart', 'add');
+	$itemId = $_GET['page'];
+	try {
+		$data = getSingleProduct($itemId);
+		$product = mysqli_fetch_array($data);
+		echo '<div class="menu">';
+		showDetailOfProduct($product['ID'], $product['filename_image'], $product['name'], $product['price']);
+		echo '<div>'.$product['item_description'].'</div></li>';
+		if (isset($_SESSION['login'])) {
+			showActionForm($product['ID'], 'Add to Cart', 'add');
+		}
+		echo '</div>';
+	} catch (Exception $e) {
+		logError($e);
+		echo 'There seems to be a technical issue. Please try again later.';
 	}
-	echo '</div>';
 	addToCart();
 }
 
@@ -130,19 +140,11 @@ function showLoginPage($data) {
 //showItemsCart
 function showItemsCart($array){
 	$items = array_filter($array);
-	if (!isset($_SESSION['total'])) {
-		$_SESSION['total'] = array();
-	} else {
-		unset($_SESSION['total']);
-		$_SESSION['total'] = array();
-	}
+	setTotalArray();
 	try {
 		$products = getAllProducts();
-	} catch (Exception $e) {
-		logError($e);
-	}
-    while ($product = mysqli_fetch_array($products))
-    {
+		while ($product = mysqli_fetch_array($products))
+    	{
         if (array_key_exists($product['ID'], $items)) {
 		    $item_total = number_format($items[$product['ID']] * $product['price'], 2);
 		    echo '<div class="cartitems">';
@@ -153,16 +155,15 @@ function showItemsCart($array){
 		    echo '</div>';
 		    echo '<div class="countcontainer">';
 			showActionForm($product['ID'], 'Update', 'updateCart', $items[$product['ID']]);
-		    //echo '<form method="post">';
-		    //echo '<input type="number" class="count" id="amountCart" name="amountCart" value="'.$items[$product['ID']].'">';
-		    //echo '<input type="hidden" name="CartID" value="'.$product['ID'].'">';
-		    //echo '<input class="cartButton" type="submit" value="Update">';
-		    //echo '</form></div>';
 			echo '</div>';
 		    echo '<div class="pricetotalcontainer"><div class="priceitemtotal">'.$item_total.'</div></div>';
 		    echo '</div>';
 		    array_push($_SESSION['total'], $item_total);
         }
+		}
+	} catch (Exception $e) {
+		logError($e);
+		echo 'There seems to be a technical issue. Please try again later.';
 	}
 }
 

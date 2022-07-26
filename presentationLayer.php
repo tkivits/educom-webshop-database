@@ -195,38 +195,38 @@ function processRequest($page) {
 	switch($page)
 	{
 		case 'Contact';
-		$data = testContact();
-		if (isset($data['valid']) && $data['valid'] == True) {
-			$page = 'Thanks';
-		}
-		break;
+			$data = testContact();
+			if (isset($data['valid']) && $data['valid'] == True) {
+				$page = 'Thanks';
+			}
+			break;
 		case 'Register';
-		$data = checkRegistration();
-		if (isset($data['valid']) && $data['valid'] == True) {
-			$page = 'Login';
-		}
-		break;
+			$data = checkRegistration();
+			if (isset($data['valid']) && $data['valid'] == True) {
+				$page = 'Login';
+			}
+			break;
 		case 'Login';
-		$data = logInUser();
-		if (isset($data['valid']) && $data['valid'] == True) {
-			$page = 'Home';
-		}
-		break;
+			$data = logInUser();
+			if (isset($data['valid']) && $data['valid'] == True) {
+				$page = 'Home';
+			}
+			break;
 		case 'Cart';
-		$data = updateCart();
-		if ($data == True) {
-			$page = 'YourOrder';
-		} else {
-			$page = 'Cart';
-		}
-		break;
+			$data = updateCart();
+			if ($data['valid'] == True) {
+				$page = 'YourOrder';
+			} else {
+				$page = 'Cart';
+			}
+			break;
 		case is_numeric($page);
-		$page = 'Product';
-		break;
+			$page = 'Product';
+			break;
 		case 'Logout';
-		logOutUser();
-		$page = 'Home';
-		break;
+			logOutUser();
+			$page = 'Home';
+			break;
 	}
 	$data['page'] = $page;
 	return $data;

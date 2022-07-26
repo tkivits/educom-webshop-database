@@ -7,6 +7,11 @@ function testInput($data) {
   return $data;
 }
 
+//logError
+function logError($msg) {
+	echo "LOG TO SERVER: ".$msg;
+}
+
 //testContact
 function testContact() {
 	$salErr = $namErr = $emailErr = $phonErr = $comprefErr = $messErr = "";
@@ -92,8 +97,12 @@ function checkRegistration() {
 			$emailErr = "E-mail already exists";
 		}
 		if (empty($namErr) && empty($emailErr) && empty($pwErr) && empty($pwRepeatErr)) {
-			registerNewUser($email, $name, $pw);
-		    $valid = True;
+			try {
+				registerNewUser($email, $name, $pw);
+		    	$valid = True;
+			} catch (Exception $e) {
+				logError($e);
+			}
 		}
 		return array('name' => $name, 'namErr' => $namErr, 'email' => $email, 'emailErr' => $emailErr, 'pw' => $pw, 'pwErr' => $pwErr, 'pwRepeat' => $pwrepeat, 'pwRepeatErr' => $pwRepeatErr, 'valid' => $valid);
 	} 
@@ -116,12 +125,17 @@ function logInUser() {
 		    $pwErr = "Password is required";
 		}
 		if(empty($emailErr) && empty($pwErr)) {
-			$user = findUserByEmail($email);
-			if (empty($user) || $user['email'] !== $email) {
-				$emailErr= "Unknown e-mail";
-			}
-			if (empty($user) || $user['password'] !== $pw) {
-				$pwErr = "E-mail doesn't match password";
+			try {
+				$user = findUserByEmail($email);
+
+				if (empty($user) || $user['email'] !== $email) {
+					$emailErr= "Unknown e-mail";
+				}
+				if (empty($user) || $user['password'] !== $pw) {
+					$pwErr = "E-mail doesn't match password";
+				}
+			} catch (Exception $e) {
+				logError($e);
 			}
 		}
 	    if(empty($emailErr) && empty($pwErr)) {
@@ -146,12 +160,17 @@ function addToCart(){
 	if(isset($_POST['add'])){
 		$id = testInput($_POST['add']);
 		if (!isset($_SESSION['cart'])) {
-			$products = getAllProducts();
-			$_SESSION['cart'] = array();
-			while ($row = mysqli_fetch_array($products)) {
-				$single_id = $row['ID'];
-				$_SESSION['cart'][$single_id] = 0;
+			try {
+				$products = getAllProducts();
+				$_SESSION['cart'] = array();
+				while ($row = mysqli_fetch_array($products)) {
+					$single_id = $row['ID'];
+					$_SESSION['cart'][$single_id] = 0;
+				}
+			} catch (Exception $e) {
+				logError($e);
 			}
+			
 		}
 		if ($_SESSION['cart'][$id] >= 0) {
 			$qty = $_SESSION['cart'][$id];
@@ -164,18 +183,20 @@ function addToCart(){
 
 //updateCart
 function updateCart() {
+	$valid = "";
 	if(isset($_POST['CartID']) && isset($_POST['amountCart'])) {
 		$item_id = testInput($_POST['CartID']);
 		$amount = testInput($_POST['amountCart']);
 		$_SESSION['cart'][$item_id] = $amount;
 		unset($_POST['CartID']);
 		unset($_POST['amountCart']);
-		return False;
+		$valid = False;
 	}
 	if(isset($_POST['termAgree'])) {
 		registerOrder();
-		return True;
+		$valid = True;
 	}
+	return array('valid' => $valid);
 }
 
 ?>

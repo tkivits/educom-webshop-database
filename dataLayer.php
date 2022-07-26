@@ -2,9 +2,13 @@
 
 //connectToDB
 function connectToDB() {
-	$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
-	if (!$conn) {
-		die("foutje"); //Moet nog een exception worden
+	try {
+		$conn = mysqli_connect("localhost", "WebShopUser", "1VyldCNbXjpb", "teuns_webshop");
+		if (!$conn) {
+			throw new Exception("Connection failed".mysqli_connect_error());
+		}
+	} catch (Exception $e) {
+		logError($e);
 	}
 	return $conn;
 }
@@ -13,8 +17,15 @@ function connectToDB() {
 function registerNewUser($email, $name, $pw) {
 	$sql = "INSERT INTO users (email, name, password) VALUES ('$email', '$name', '$pw')";
 	$conn = connectToDB();
-	mysqli_query($conn, $sql);
-	mysqli_close($conn);
+	try {
+		$result = mysqli_query($conn, $sql);
+		if (!$result) {
+			throw new Exception("registerNewUser query failed, SQL: ".$sql." error: ".mysqli_error($conn));
+		}
+	}
+	finally {
+		mysqli_close($conn);
+	}
 }
 
 //findUserByEmail
@@ -68,21 +79,28 @@ function getSingleProduct($id) {
 
 //registerOrder
 function registerOrder() {
-	$conn = connectToDB();
 	$user_id = $_SESSION['user_id'];
 	$total = number_format(array_sum($_SESSION['total']), 2);
 	$sql = "INSERT INTO orders (user_id, total) VALUES ('$user_id', '$total')";
-	mysqli_query($conn, $sql);
-	$sql = "SELECT ID FROM orders WHERE ID=(SELECT max(ID) FROM orders)";
-	$data = mysqli_query($conn, $sql);
-	$row = mysqli_fetch_array($data);
-	$order_id = $row['ID'];
-	$items = array_filter($_SESSION['cart']);
-	foreach ($items as $product_id => $qty) {
-		$sql = "INSERT INTO order_item (order_id, product_id, quantity) VALUES ('$order_id', '$product_id', '$qty')";
-		mysqli_query($conn, $sql);
+	$conn = connectToDB();
+	try {
+		if (mysqli_query($conn, $sql)) {
+			$order_id = mysqli_insert_id($conn);
+		} else {
+			throw new Exception("Can't insert order, SQL: ".$sql." error: ".mysqli_error($conn));
+		}
+		$items = array_filter($_SESSION['cart']);
+		foreach ($items as $product_id => $qty) {
+			$sql = "INSERT INTO order_item (order_id, product_id, quantity) VALUES ('$order_id', '$product_id', '$qty')";
+			$result = mysqli_query($conn, $sql);
+			if (!$result) {
+				throw new Exception ("Can't insert item, SQL: ".$sql." error: ".mysqli_error($conn));
+			}
+		}
 	}
-	mysqli_close($conn);
+	finally {
+		mysqli_close($conn);
+	}
 }
 
 ?>

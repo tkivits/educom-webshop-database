@@ -157,8 +157,8 @@ function logOutUser() {
 
 //addToCart
 function addToCart(){
-	if(isset($_POST['add'])){
-		$id = testInput($_POST['add']);
+	if(isset($_POST['action'])){
+		$id = testInput($_POST['CartID']);
 		if (!isset($_SESSION['cart'])) {
 			try {
 				$products = getAllProducts();
@@ -184,7 +184,7 @@ function addToCart(){
 //updateCart
 function updateCart() {
 	$valid = "";
-	if(isset($_POST['CartID']) && isset($_POST['amountCart'])) {
+	if(isset($_POST['CartID']) && $_POST['action'] == 'updateCart') {
 		$item_id = testInput($_POST['CartID']);
 		$amount = testInput($_POST['amountCart']);
 		$_SESSION['cart'][$item_id] = $amount;

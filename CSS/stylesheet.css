@@ -68,6 +68,7 @@ body {
 	font-size: 30px;
 	color: black;
 	margin-top: 10px;
+	text-decoration: none;
 }
 .price {
 	text-align: center;
@@ -75,6 +76,7 @@ body {
 	color: darkred;
 	margin-right: 12px;
 	margin-bottom: 12px;
+	text-decoration: none;
 }
 .cart {
 	text-align: center;

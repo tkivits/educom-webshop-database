@@ -41,6 +41,27 @@ function showFooter() {
 	include 'Pages/footer.php';
 }
 
+//showActionForm
+function showActionForm($productID, $buttonValue, $action, $amount=NULL) {
+	echo '<form method="post">';
+	echo '<input type="hidden" name="CartID" value="'.$productID.'">';
+	if (!empty($amount)) {
+		echo '<input type="number" class="count" id="amountCart" name="amountCart" value="'.$amount.'">';
+	}
+	echo '<input type="hidden" name="action" value="'.$action.'">';
+	echo '<input class="cartButton" type="submit" value="'.$buttonValue.'">';
+	echo '</form>';
+}
+
+//showDetailOfProduct
+function showDetailOfProduct($id, $image, $name, $price) {
+	echo '<a href="?page='.$id.'">';
+	echo '<img class="productimg" src="'.$image.'" alt="'.$name.'"/>';
+	echo '</a>';
+	echo '<div class="title">'.$name.'</div></li>';
+	echo '<div class="price">'.$price.'</div></li>';
+}
+
 //showHomePage
 function showHomePage() {
 	include 'Pages/home.php';
@@ -66,15 +87,12 @@ function showProductOverview() {
 	$products = getAllProducts();
 	while ($product = mysqli_fetch_array($products))
 	{
-		echo '<form class="menu" method="post">';
-		echo '<a href="?page='.$product['ID'].'"><img class="productimg" src="'.$product['filename_image'].'" alt="'.$product['name'].'"/></a>';
-		echo '<div class="title">'.$product['name'].'</div>';
-		echo '<div class="price">'.$product['price'].'</div>';
+		echo '<div class="menu">';
+		showDetailOfProduct($product['ID'], $product['filename_image'], $product['name'], $product['price']);
 		if (isset($_SESSION['login'])){
-			echo '<input class="cartButton" type="submit" value="Add to cart">';
-			echo '<input type="hidden" name="add" value="'.$product['ID'].'">';
+			showActionForm($product['ID'], 'Add to Cart', 'add');
 		}
-		echo '</form>';
+		echo '</div>';
 	}
 }
 
@@ -84,21 +102,18 @@ function showWebshopPage() {
 	addToCart();
 }
 
-//showProductDetail
-function showProductDetail() {
+//showProductDetailPage
+function showProductDetailPage() {
 	$itemid = $_GET['page'];
 	$data = getSingleProduct($itemid);
 	$product = mysqli_fetch_array($data);
-	echo '<form class="menu" method="post">';
-	echo '<img class="productimg" src="'.$product['filename_image'].'" alt="'.$product['name'].'"/>';
-	echo '<div class="title">'.$product['name'].'</div></li>';
-	echo '<div class="price">'.$product['price'].'</div></li>';
+	echo '<div class="menu">';
+	showDetailOfProduct($product['ID'], $product['filename_image'], $product['name'], $product['price']);
 	echo '<div>'.$product['item_description'].'</div></li>';
 	if (isset($_SESSION['login'])) {
-		echo '<input class="cartButton" type="submit" value="Add to cart">';
-		echo '<input type="hidden" name="add" value="'.$product['ID'].'">';
+		showActionForm($product['ID'], 'Add to Cart', 'add');
 	}
-	echo '</form>';
+	echo '</div>';
 	addToCart();
 }
 
@@ -121,7 +136,11 @@ function showItemsCart($array){
 		unset($_SESSION['total']);
 		$_SESSION['total'] = array();
 	}
-    $products = getAllProducts();
+	try {
+		$products = getAllProducts();
+	} catch (Exception $e) {
+		logError($e);
+	}
     while ($product = mysqli_fetch_array($products))
     {
         if (array_key_exists($product['ID'], $items)) {
@@ -133,11 +152,13 @@ function showItemsCart($array){
 		    echo '<div class="itemprice">'.$product['price'].'</div>';
 		    echo '</div>';
 		    echo '<div class="countcontainer">';
-		    echo '<form method="post">';
-		    echo '<input type="number" class="count" id="amountCart" name="amountCart" value="'.$items[$product['ID']].'">';
-		    echo '<input type="hidden" name="CartID" value="'.$product['ID'].'">';
-		    echo '<input class="cartButton" type="submit" value="Update">';
-		    echo '</form></div>';
+			showActionForm($product['ID'], 'Update', 'updateCart', $items[$product['ID']]);
+		    //echo '<form method="post">';
+		    //echo '<input type="number" class="count" id="amountCart" name="amountCart" value="'.$items[$product['ID']].'">';
+		    //echo '<input type="hidden" name="CartID" value="'.$product['ID'].'">';
+		    //echo '<input class="cartButton" type="submit" value="Update">';
+		    //echo '</form></div>';
+			echo '</div>';
 		    echo '<div class="pricetotalcontainer"><div class="priceitemtotal">'.$item_total.'</div></div>';
 		    echo '</div>';
 		    array_push($_SESSION['total'], $item_total);
@@ -255,7 +276,7 @@ function showResponsePage($data){
 		  showWebshopPage();
 		  break;
 		case 'Product';
-		  showProductDetail();
+		  showProductDetailPage();
 		  break;
 		case 'Cart';
 		  showShoppingCartPage();

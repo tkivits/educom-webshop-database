@@ -1,8 +1,4 @@
 <?php
-
-//variabelen
-$salErr = $namErr = $emailErr = $phonErr = $comprefErr = $messErr = $pwErr = $pwRepeatErr = "";
-
 //testInput
 function testInput($data) {
   $data = trim($data);
@@ -65,7 +61,9 @@ function testContact() {
 
 //checkRegistration
 function checkRegistration() {
-	global $namErr, $emailErr, $pwErr, $pwRepeatErr;
+	$namErr = $emailErr = $pwErr = $pwRepeatErr = "";
+	$name = $email = $pw = $pwrepeat = "";
+	$valid = False;
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
 		$name = testInput($_POST['name']);
 		$email = testInput($_POST['email']);
@@ -95,15 +93,17 @@ function checkRegistration() {
 		}
 		if (empty($namErr) && empty($emailErr) && empty($pwErr) && empty($pwRepeatErr)) {
 			registerNewUser($email, $name, $pw);
-		    return True;
+		    $valid = True;
 		}
-	}
+		return array('name' => $name, 'namErr' => $namErr, 'email' => $email, 'emailErr' => $emailErr, 'pw' => $pw, 'pwErr' => $pwErr, 'pwRepeat' => $pwrepeat, 'pwRepeatErr' => $pwRepeatErr, 'valid' => $valid)
+	} 
 }
 
 //logInUser
 function logInUser() {
-	global $emailErr, $pwErr;
-	$pw = $pwCheck = "";
+	$emailErr = $pwErr = "";
+	$email = $pw = "";
+	$valid = False
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
 		$email = testInput($_POST['email']);
 		$pw = testInput($_POST['pw']);
@@ -129,8 +129,9 @@ function logInUser() {
 			$_SESSION['user_id'] = $user['ID'];
 		    $_SESSION['email'] = $user['email'];
 		    $_SESSION['name'] = $user['name'];
-		    return True;
+		    $valid = True;
 		}
+		return array('email' => $email, 'emailErr' => $emailErr, 'pw' => $pw, 'pwErr' => $pwErr, 'valid' => $valid);
 	}
 }
 

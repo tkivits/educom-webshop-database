@@ -1,6 +1,6 @@
 <h1>Thank you for filling in the contact form!</h1>
-<div>Your details are: <?php echo $_POST['sal'] ?> <?php echo $_POST['name'] ?></div>
-<div>Email: <?php echo $_POST['email'] ?></div>
-<div>Telephone: <?php echo $_POST['phone'] ?></div>
-<div>Communication preference: <?php echo $_POST['compref'] ?></div>
-<div>Message: <?php echo $_POST['mess'] ?></div>
+<div>Your details are: <?php echo $data['sal'] ?> <?php echo $data['name'] ?></div>
+<div>Email: <?php echo $data['email'] ?></div>
+<div>Telephone: <?php echo $data['phone'] ?></div>
+<div>Communication preference: <?php echo $data['compref'] ?></div>
+<div>Message: <?php echo $data['mess'] ?></div>

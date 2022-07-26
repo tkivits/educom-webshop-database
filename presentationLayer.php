@@ -57,7 +57,7 @@ function showContactPage($data) {
 }
 
 //showContactThanksPage
-function showContactThanksPage() {
+function showContactThanksPage($data) {
 	include 'Pages/contactthanks.php';
 }
 
@@ -103,14 +103,12 @@ function showProductDetail() {
 }
 
 //showRegisterPage
-function showRegisterPage() {
-	global $namErr, $emailErr, $pwErr, $pwRepeatErr;
+function showRegisterPage($data) {
 	include 'Pages/register.php';
 }
 
 //showLoginPage
-function showLoginPage() {
-	global $emailErr, $pwErr;
+function showLoginPage($data) {
 	include 'Pages/login.php';
 }
 
@@ -199,7 +197,9 @@ function processRequest($page) {
 		case 'Contact';
 		$data = testContact();
 		if ($data == True) {
-			$page = 'Thanks';
+			showContactThanksPage($data);
+		}  else {
+			showContactPage($data);
 		}
 		break;
 		case 'Register';
@@ -207,13 +207,15 @@ function processRequest($page) {
 		if ($data['valid'] == True) {
 			$page = 'Login';
 		} else {
-			showContactPage($data);
+			showRegisterPage($data);
 		}
 		break;
 		case 'Login';
 		$data = logInUser();
 		if ($data == True) {
 			$page = 'Home';
+		} else {
+			showLoginPage($data);
 		}
 		break;
 		case 'Cart';
